@@ -17,11 +17,15 @@ a<-filter(data,classname == "democrat" & handicappedinfants == "y")
 b<-filter(data,classname == "democrat" & handicappedinfants == "n")
 c<-filter(data,classname == "democrat" & handicappedinfants == "?")
 
-data3 <- lapply(X=col.names,FUN = function(m) df <- print(filter(data,classname == "democrat" & data$m == "y"))) #funciona
+data3 <- lapply(X=col.names,FUN = function(m) df <- print(filter(data, classname == "democrat" & data$m == "y"))) #funciona
 d<-lapply(X=col.names,FUN = function(m) df <- as.numeric(summary(unlist(select(as.data.frame(data3),m)))))
 
 x<-as.numeric(summary(unlist(select(a,handicappedinfants))))
 y<-as.numeric(summary(unlist(select(b,handicappedinfants))))
 z<-as.numeric(summary(unlist(select(c,handicappedinfants))))
-
 w<-as.numeric(summary(unlist(select(d,handicappedinfants))))
+
+democratas <- filter(data, data$classname == "democrat")
+democratas <- lapply(X=democratas, FUN = function(m) df <- summary(m))
+
+
