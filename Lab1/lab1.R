@@ -1,31 +1,31 @@
 library(tidyverse)
+#setwd("/Users/cata/Desktop/Lab-analisis-de-datos/Lab1")
+#DATA.FILTER obtiene la tabla de frecuencia de los votos totales, de democratas y republicanos par cada
+#votación
 
+data.filter<-function(
+  data,
+  col.names
+){
+  data2<-filter(data, data$classname == "democrat")
+  data2 <- lapply(X=data,FUN = function(m) df <- summary(m))
+  data2[1]<-NULL
+  data2<-do.call(rbind.data.frame, data2)
+  colnames(data2)<-col.names
+  data2
+}
+
+
+#DATA: DATOS ORIGINALES DE LA BASE DE DATOS, CON LOS POLÍTICOS Y SUS VOTOS
 data <- read.csv("house-votes-84.data", header = TRUE, sep = ",",quote = "\"",fill=T)
 colnames(data) <- c("classname", "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
-data2 <- lapply(X=data,FUN = function(m) df <- summary(m))
-class.name<-data2[1]
-data2[1]<-NULL
-data2<-do.call(rbind.data.frame, data2)
-row.names(data2) <- c( "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
-colnames(data2)<-c("?","n","y")
+democrat<-filter(data, data$classname == "democrat")
+republican<-filter(data, data$classname == "republican")
+data1<-data.filter(data,c("?","n","y"))
+data2 <- data.filter(democrat,c("Democrat ?","Democrat n","Democrat y"))
+data3 <- data.filter(republican,c("Republican ?","Republican n","Republican y"))
 
-names<-c("democrat","republican")
-type.vote<- c("y","n","?")
-col.names <- c( "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
-
-a<-filter(data,classname == "democrat" & handicappedinfants == "y")
-b<-filter(data,classname == "democrat" & handicappedinfants == "n")
-c<-filter(data,classname == "democrat" & handicappedinfants == "?")
-
-data3 <- lapply(X=col.names,FUN = function(m) df <- print(filter(data, classname == "democrat" & data$m == "y"))) #funciona
-d<-lapply(X=col.names,FUN = function(m) df <- as.numeric(summary(unlist(select(as.data.frame(data3),m)))))
-
-x<-as.numeric(summary(unlist(select(a,handicappedinfants))))
-y<-as.numeric(summary(unlist(select(b,handicappedinfants))))
-z<-as.numeric(summary(unlist(select(c,handicappedinfants))))
-w<-as.numeric(summary(unlist(select(d,handicappedinfants))))
-
-democratas <- filter(data, data$classname == "democrat")
-democratas <- lapply(X=democratas, FUN = function(m) df <- summary(m))
-
+final <- c(data1,data2,data3)
+final<-do.call(cbind.data.frame, final)
+rownames(final) <- c( "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
 
