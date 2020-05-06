@@ -3,6 +3,7 @@ library(ggplot2)
 library(ggpubr)
 library(gridExtra)
 #setwd("/Users/cata/Desktop/Lab-analisis-de-datos/Lab1")
+#setwd("/home/d3f4ult/Escritorio/Lab-analisis-de-datos/Lab1")
 #DATA.FILTER obtiene la tabla de frecuencia de los votos totales, de democratas y republicanos par cada
 #votación
 
