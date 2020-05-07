@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(gridExtra)
+
 #setwd("/Users/cata/Desktop/Lab-analisis-de-datos/Lab1")
 #setwd("/home/d3f4ult/Escritorio/Lab-analisis-de-datos/Lab1")
 #DATA.FILTER obtiene la tabla de frecuencia de los votos totales, de democratas y republicanos par cada
@@ -60,6 +61,27 @@ plot.hist<-function(
     labs(x=xlab,y=ylab)
   
 }
+
+#############################GRÁFICO DE CAJA DE LOS VOTOS (DEMÓCRATAS VS REPUBLICANOS)###############################
+
+plot.box<-function(
+  table,
+  x,
+  y,
+  xlab,
+  ylab,
+  tittle
+  
+){
+  ggboxplot(
+    table, x = x, y = y,
+    color = x, palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+    xlab = xlab,
+    add = "jitter",
+    ylab = ylab
+  ) 
+}
+
 
 #DATA: DATOS ORIGINALES DE LA BASE DE DATOS, CON LOS POLÍTICOS Y SUS VOTOS
 data <- read.csv("house-votes-84.data", header = TRUE, sep = ",",quote = "\"",fill=T)
@@ -120,4 +142,28 @@ grid.arrange(
   plot.hist(r.range,rownames(r.range),r.range$"dutyfreeexports","Tipo de voto","Cantidad de votos","Votos republicanos duty free exports"),
   plot.hist(r.range,rownames(r.range),r.range$"exportadministrationactsouthafrica","Tipo de voto","Cantidad de votos","Votos republicanos export administration act south africa"),
   ncol = 4)
+
+
+#############################################TABLA DE CONTINGENCIA######################################################
+names <- c('y','n','?')
+democrat.contingency <- as.data.frame(sapply(names, function(x) rowSums(democrat[,2:17]==x)))
+colnames(democrat.contingency) <- names
+class<-rep("democrat",267)
+democrat.contingency$class<-class
+
+republican.contingency <- as.data.frame(sapply(names, function(x) rowSums(democrat[,2:17]==x)))
+colnames(republican.contingency) <- names
+class<-rep("republican",267)
+republican.contingency$class<-class
+
+table <-rbind(democrat.contingency,republican.contingency)
+colnames(table)<- c('y','n','nv','class')
+
+
+grid.arrange(plot.box(table,"class","y","Clases","Votos si","Votos si demócratas vs republicanos"),
+             plot.box(table,"class","n","Clases","Votos no","Votos si demócratas vs republicanos"),
+             plot.box(table,"class","nv","Clases","No vota","Votos si demócratas vs republicanos"),
+             ncol = 3)
+
+
 
