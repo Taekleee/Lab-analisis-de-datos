@@ -151,9 +151,9 @@ colnames(democrat.contingency) <- names
 class<-rep("democrat",267)
 democrat.contingency$class<-class
 
-republican.contingency <- as.data.frame(sapply(names, function(x) rowSums(democrat[,2:17]==x)))
+republican.contingency <- as.data.frame(sapply(names, function(x) rowSums(republican[,2:17]==x)))
 colnames(republican.contingency) <- names
-class<-rep("republican",267)
+class<-rep("republican",167)
 republican.contingency$class<-class
 
 table <-rbind(democrat.contingency,republican.contingency)
@@ -166,4 +166,15 @@ grid.arrange(plot.box(table,"class","y","Clases","Votos si","Votos si demócrata
              ncol = 3)
 
 
+table$class <- as.factor(table$class)
+set.seed(123)
+up_train <- upSample(x = trainData[, colnames(trainData) %ni% "Class"],
+                     y = trainData$Class)
 
+logistic <- glm(class ~ y + n, data = table, family = "binomial")
+summary(logistic)
+coefficients(logistic)
+idx.logistic  <- sample(1:100, 70, replace=TRUE)
+df.test <- table[idx.logistic,]
+df.test$prob = predict(logistic, df.test,type="response")
+head(df.test[, c("y","n", "prob", "class")])
