@@ -165,16 +165,75 @@ grid.arrange(plot.box(table,"class","y","Clases","Votos si","Votos si demócrata
              plot.box(table,"class","nv","Clases","No vota","Votos si demócratas vs republicanos"),
              ncol = 3)
 
+################################## REGRESIÓN LOGÍSTICA #################################
 
+#Se indica como factor la clase que incluye las opciones "democrat" y "republican
 table$class <- as.factor(table$class)
-set.seed(123)
-up_train <- upSample(x = trainData[, colnames(trainData) %ni% "Class"],
-                     y = trainData$Class)
 
-logistic <- glm(class ~ y + n, data = table, family = "binomial")
-summary(logistic)
-coefficients(logistic)
-idx.logistic  <- sample(1:100, 70, replace=TRUE)
-df.test <- table[idx.logistic,]
-df.test$prob = predict(logistic, df.test,type="response")
-head(df.test[, c("y","n", "prob", "class")])
+binary = table[table$class == "democrat" | significative.table$class == "republican", ]
+binary$class_ = as.integer(table$class) - 2
+  
+
+rlog <- glm(class ~ y + n, table, family="binary")
+summary(rlog)
+coefficients(rlog)
+idx <- sample(1:400, 260, replace=TRUE)
+df.test <- binary[idx,]
+df.test$prob <- predict(rlog, df.test, type="response")
+head(df.test[, c("y","n","prob","class")])
+
+y_pred_num <- ifelse(df.test$prob<0.5,"democrat","republican")
+y_pred <- factor(y_pred_num)
+y_act <- df.test
+mean(y_pred == y_act$class)
+
+################## Regresión logística con datos significativos ################
+
+significative.democrat <- democrat[,c("classname","adoptionofthebudgetresolution",
+                                      "physicianfeefreeze","elsalvadoraid",
+                                      "antisatellitetestban","aidtonicaraguancontras",
+                                      "mxmissile","educationspending",
+                                      "superfundrighttosue")]
+
+significative.republican <- republican[,c("classname","adoptionofthebudgetresolution",
+                                      "physicianfeefreeze","elsalvadoraid",
+                                      "antisatellitetestban","aidtonicaraguancontras",
+                                      "mxmissile","educationspending",
+                                      "superfundrighttosue")]
+
+names <- c('y','n','?')
+significative.democrat.contingency <- as.data.frame(sapply(names, function(x) rowSums(significative.democrat[,2:8]==x)))
+colnames(significative.democrat.contingency) <- names
+class<-rep("democrat",267)
+significative.democrat.contingency$class<-class
+
+significative.republican.contingency <- as.data.frame(sapply(names, function(x) rowSums(republican[,2:8]==x)))
+colnames(significative.republican.contingency) <- names
+class<-rep("republican",167)
+significative.republican.contingency$class<-class
+
+significative.table <-rbind(significative.democrat.contingency,significative.republican.contingency)
+colnames(table)<- c('y','n','nv','class')
+
+#Se indica como factor la clase que incluye las opciones "democrat" y "republican
+significative.table$class <- as.factor(table$class)
+binary = significative.table[significative.table$class == "democrat" | significative.table$class == "republican", ]
+binary$class_ = as.integer(significative.table$class) - 2
+
+
+
+rlog <- glm(class ~ y + n, significative.table, family="binary")
+summary(rlog)
+coefficients(rlog)
+idx <- sample(1:400, 260, replace=TRUE)
+df.test <- binary[idx,]
+df.test$prob <- predict(rlog, df.test, type="response")
+head(df.test[, c("y","n","prob","class")])
+
+y_pred_num <- ifelse(df.test$prob<0.5,"democrat","republican")
+y_pred <- factor(y_pred_num)
+y_act <- df.test
+mean(y_pred == y_act$class)
+
+
+
