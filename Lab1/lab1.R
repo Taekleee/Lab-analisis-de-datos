@@ -259,4 +259,8 @@ plot.hist2(republican.contingency[,2],"Histograma republicanos votos no","Votos 
 t.test(x = democrat.contingency[,1], y = republican.contingency[,1], alternative = "two.sided", mu = 0, paired = FALSE, conf.level = 0.99)
 t.test(x = democrat.contingency[,2], y = republican.contingency[,2], alternative = "two.sided", mu = 0, paired = FALSE, conf.level = 0.99)
 
+#####################################Correlación###########################################################
 
+#Correlación con los tipos de relaciones, de esta forma es posible saber si votar por 
+#una categoría implica votar por la otra
+cor(final)
