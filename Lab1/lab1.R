@@ -43,7 +43,7 @@ statistical.measures<-function(
 
 
 #HISTOGRAMA DE LOS VOTOS
-plot.hist<-function(
+plot.hist1<-function(
   data,
   x,
   y,
@@ -60,6 +60,24 @@ plot.hist<-function(
     ggtitle(tittle)+
     labs(x=xlab,y=ylab)
   
+}
+
+
+
+plot.hist2<-function(
+  data,
+  tittle,
+  xlab,
+  color
+){
+  hist(democrat.contingency[,1], 
+       main=tittle, 
+       xlab=xlab, 
+       ylab = "Frecuencia",
+       border="black", 
+       col=color,
+       las=1, 
+       breaks=5)
 }
 
 #############################GRÁFICO DE CAJA DE LOS VOTOS (DEMÓCRATAS VS REPUBLICANOS)###############################
@@ -105,42 +123,42 @@ d.range<-final[4:6,]
 r.range<-final[7:9,]
 
 grid.arrange(
-  plot.hist(d.range,rownames(d.range),d.range$"handicappedinfants","Tipo de voto","Cantidad de votos","Votos demócratas handicapped infants"),
-  plot.hist(d.range,rownames(d.range),d.range$"waterprojectcostsharing","Tipo de voto","Cantidad de votos","Votos demócratas water project cost sharing"),
-  plot.hist(d.range,rownames(d.range),d.range$"adoptionofthebudgetresolution","Tipo de voto","Cantidad de votos","Votos demócratas adoption of the budget resolution"),
-  plot.hist(d.range,rownames(d.range),d.range$"physicianfeefreeze","Tipo de voto","Cantidad de votos","Votos demócratas physician fee freeze"),
-  plot.hist(d.range,rownames(d.range),d.range$"elsalvadoraid","Tipo de voto","Cantidad de votos","Votos demócratas el salvador aid"),
-  plot.hist(d.range,rownames(d.range),d.range$"religiousgroupsinschools","Tipo de voto","Cantidad de votos","Votos demócratas religious groups in schools"),
-  plot.hist(d.range,rownames(d.range),d.range$"antisatellitetestban","Tipo de voto","Cantidad de votos","Votos demócratas antisatellite test ban"),
-  plot.hist(d.range,rownames(d.range),d.range$"aidtonicaraguancontras","Tipo de voto","Cantidad de votos","Votos demócratas aid to nicaraguan contras"),
-  plot.hist(d.range,rownames(d.range),d.range$"mxmissile","Tipo de voto","Cantidad de votos","Votos demócratas mx missile"),
-  plot.hist(d.range,rownames(d.range),d.range$"immigration","Tipo de voto","Cantidad de votos","Votos demócratas immigration"),
-  plot.hist(d.range,rownames(d.range),d.range$"synfuelscorporationcutback","Tipo de voto","Cantidad de votos","Votos demócratas synfuels corporation cutback"),
-  plot.hist(d.range,rownames(d.range),d.range$"educationspending","Tipo de voto","Cantidad de votos","Votos demócratas education spending"),
-  plot.hist(d.range,rownames(d.range),d.range$"superfundrighttosue","Tipo de voto","Cantidad de votos","Votos demócratas superfun dright to sue"),
-  plot.hist(d.range,rownames(d.range),d.range$"crime","Tipo de voto","Cantidad de votos","Votos demócratas crime"),
-  plot.hist(d.range,rownames(d.range),d.range$"dutyfreeexports","Tipo de voto","Cantidad de votos","Votos demócratas duty free exports"),
-  plot.hist(d.range,rownames(d.range),d.range$"exportadministrationactsouthafrica","Tipo de voto","Cantidad de votos","Votos demócratas export administration act south africa"),
+  plot.hist1(d.range,rownames(d.range),d.range$"handicappedinfants","Tipo de voto","Cantidad de votos","Votos demócratas handicapped infants"),
+  plot.hist1(d.range,rownames(d.range),d.range$"waterprojectcostsharing","Tipo de voto","Cantidad de votos","Votos demócratas water project cost sharing"),
+  plot.hist1(d.range,rownames(d.range),d.range$"adoptionofthebudgetresolution","Tipo de voto","Cantidad de votos","Votos demócratas adoption of the budget resolution"),
+  plot.hist1(d.range,rownames(d.range),d.range$"physicianfeefreeze","Tipo de voto","Cantidad de votos","Votos demócratas physician fee freeze"),
+  plot.hist1(d.range,rownames(d.range),d.range$"elsalvadoraid","Tipo de voto","Cantidad de votos","Votos demócratas el salvador aid"),
+  plot.hist1(d.range,rownames(d.range),d.range$"religiousgroupsinschools","Tipo de voto","Cantidad de votos","Votos demócratas religious groups in schools"),
+  plot.hist1(d.range,rownames(d.range),d.range$"antisatellitetestban","Tipo de voto","Cantidad de votos","Votos demócratas antisatellite test ban"),
+  plot.hist1(d.range,rownames(d.range),d.range$"aidtonicaraguancontras","Tipo de voto","Cantidad de votos","Votos demócratas aid to nicaraguan contras"),
+  plot.hist1(d.range,rownames(d.range),d.range$"mxmissile","Tipo de voto","Cantidad de votos","Votos demócratas mx missile"),
+  plot.hist1(d.range,rownames(d.range),d.range$"immigration","Tipo de voto","Cantidad de votos","Votos demócratas immigration"),
+  plot.hist1(d.range,rownames(d.range),d.range$"synfuelscorporationcutback","Tipo de voto","Cantidad de votos","Votos demócratas synfuels corporation cutback"),
+  plot.hist1(d.range,rownames(d.range),d.range$"educationspending","Tipo de voto","Cantidad de votos","Votos demócratas education spending"),
+  plot.hist1(d.range,rownames(d.range),d.range$"superfundrighttosue","Tipo de voto","Cantidad de votos","Votos demócratas superfun dright to sue"),
+  plot.hist1(d.range,rownames(d.range),d.range$"crime","Tipo de voto","Cantidad de votos","Votos demócratas crime"),
+  plot.hist1(d.range,rownames(d.range),d.range$"dutyfreeexports","Tipo de voto","Cantidad de votos","Votos demócratas duty free exports"),
+  plot.hist1(d.range,rownames(d.range),d.range$"exportadministrationactsouthafrica","Tipo de voto","Cantidad de votos","Votos demócratas export administration act south africa"),
   ncol = 4
 )
 
 grid.arrange(
-  plot.hist(r.range,rownames(r.range),r.range$"handicappedinfants","Tipo de voto","Cantidad de votos","Votos republicanos handicapped infants"),
-  plot.hist(r.range,rownames(r.range),r.range$"waterprojectcostsharing","Tipo de voto","Cantidad de votos","Votos republicanos water project cost sharing"),
-  plot.hist(r.range,rownames(r.range),r.range$"adoptionofthebudgetresolution","Tipo de voto","Cantidad de votos","Votos republicanos adoption of the budget resolution"),
-  plot.hist(r.range,rownames(r.range),r.range$"physicianfeefreeze","Tipo de voto","Cantidad de votos","Votos republicanos physician fee freeze"),
-  plot.hist(r.range,rownames(r.range),r.range$"elsalvadoraid","Tipo de voto","Cantidad de votos","Votos republicanos el salvador aid"),
-  plot.hist(r.range,rownames(r.range),r.range$"religiousgroupsinschools","Tipo de voto","Cantidad de votos","Votos republicanos religious groups in schools"),
-  plot.hist(r.range,rownames(r.range),r.range$"antisatellitetestban","Tipo de voto","Cantidad de votos","Votos republicanos antisatellite test ban"),
-  plot.hist(r.range,rownames(r.range),r.range$"aidtonicaraguancontras","Tipo de voto","Cantidad de votos","Votos republicanos aid to nicaraguan contras"),
-  plot.hist(r.range,rownames(r.range),r.range$"mxmissile","Tipo de voto","Cantidad de votos","Votos republicanos mx missile"),
-  plot.hist(r.range,rownames(r.range),r.range$"immigration","Tipo de voto","Cantidad de votos","Votos republicanos immigration"),
-  plot.hist(r.range,rownames(r.range),r.range$"synfuelscorporationcutback","Tipo de voto","Cantidad de votos","Votos republicanos synfuels corporation cutback"),
-  plot.hist(r.range,rownames(r.range),r.range$"educationspending","Tipo de voto","Cantidad de votos","Votos republicanos education spending"),
-  plot.hist(r.range,rownames(r.range),r.range$"superfundrighttosue","Tipo de voto","Cantidad de votos","Votos republicanos superfun dright to sue"),
-  plot.hist(r.range,rownames(r.range),r.range$"crime","Tipo de voto","Cantidad de votos","Votos republicanos crime"),
-  plot.hist(r.range,rownames(r.range),r.range$"dutyfreeexports","Tipo de voto","Cantidad de votos","Votos republicanos duty free exports"),
-  plot.hist(r.range,rownames(r.range),r.range$"exportadministrationactsouthafrica","Tipo de voto","Cantidad de votos","Votos republicanos export administration act south africa"),
+  plot.hist1(r.range,rownames(r.range),r.range$"handicappedinfants","Tipo de voto","Cantidad de votos","Votos republicanos handicapped infants"),
+  plot.hist1(r.range,rownames(r.range),r.range$"waterprojectcostsharing","Tipo de voto","Cantidad de votos","Votos republicanos water project cost sharing"),
+  plot.hist1(r.range,rownames(r.range),r.range$"adoptionofthebudgetresolution","Tipo de voto","Cantidad de votos","Votos republicanos adoption of the budget resolution"),
+  plot.hist1(r.range,rownames(r.range),r.range$"physicianfeefreeze","Tipo de voto","Cantidad de votos","Votos republicanos physician fee freeze"),
+  plot.hist1(r.range,rownames(r.range),r.range$"elsalvadoraid","Tipo de voto","Cantidad de votos","Votos republicanos el salvador aid"),
+  plot.hist1(r.range,rownames(r.range),r.range$"religiousgroupsinschools","Tipo de voto","Cantidad de votos","Votos republicanos religious groups in schools"),
+  plot.hist1(r.range,rownames(r.range),r.range$"antisatellitetestban","Tipo de voto","Cantidad de votos","Votos republicanos antisatellite test ban"),
+  plot.hist1(r.range,rownames(r.range),r.range$"aidtonicaraguancontras","Tipo de voto","Cantidad de votos","Votos republicanos aid to nicaraguan contras"),
+  plot.hist1(r.range,rownames(r.range),r.range$"mxmissile","Tipo de voto","Cantidad de votos","Votos republicanos mx missile"),
+  plot.hist1(r.range,rownames(r.range),r.range$"immigration","Tipo de voto","Cantidad de votos","Votos republicanos immigration"),
+  plot.hist1(r.range,rownames(r.range),r.range$"synfuelscorporationcutback","Tipo de voto","Cantidad de votos","Votos republicanos synfuels corporation cutback"),
+  plot.hist1(r.range,rownames(r.range),r.range$"educationspending","Tipo de voto","Cantidad de votos","Votos republicanos education spending"),
+  plot.hist1(r.range,rownames(r.range),r.range$"superfundrighttosue","Tipo de voto","Cantidad de votos","Votos republicanos superfun dright to sue"),
+  plot.hist1(r.range,rownames(r.range),r.range$"crime","Tipo de voto","Cantidad de votos","Votos republicanos crime"),
+  plot.hist1(r.range,rownames(r.range),r.range$"dutyfreeexports","Tipo de voto","Cantidad de votos","Votos republicanos duty free exports"),
+  plot.hist1(r.range,rownames(r.range),r.range$"exportadministrationactsouthafrica","Tipo de voto","Cantidad de votos","Votos republicanos export administration act south africa"),
   ncol = 4)
 
 
@@ -220,8 +238,6 @@ significative.table$class <- as.factor(table$class)
 binary = significative.table[significative.table$class == "democrat" | significative.table$class == "republican", ]
 binary$class_ = as.integer(significative.table$class) - 2
 
-
-
 rlog <- glm(class ~ y + n, significative.table, family="binary")
 summary(rlog)
 coefficients(rlog)
@@ -235,5 +251,12 @@ y_pred <- factor(y_pred_num)
 y_act <- df.test
 mean(y_pred == y_act$class)
 
+############################t-test###################################################
+plot.hist2(democrat.contingency[,1],"Histograma demócratas votos si","Votos si","steelblue2")
+plot.hist2(republican.contingency[,1],"Histograma republicanos votos si","Votos si","darkslategray3")
+plot.hist2(democrat.contingency[,2],"Histograma demócratas votos no","Votos no","steelblue2")
+plot.hist2(republican.contingency[,2],"Histograma republicanos votos no","Votos no","darkslategray3")
+t.test(x = democrat.contingency[,1], y = republican.contingency[,1], alternative = "two.sided", mu = 0, paired = FALSE, conf.level = 0.99)
+t.test(x = democrat.contingency[,2], y = republican.contingency[,2], alternative = "two.sided", mu = 0, paired = FALSE, conf.level = 0.99)
 
 
