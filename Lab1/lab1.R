@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(gridExtra)
+library(caret) #-> install.packages("e1071")
 
 #setwd("/Users/cata/Desktop/Lab-analisis-de-datos/Lab1")
 #setwd("/home/d3f4ult/Escritorio/Lab-analisis-de-datos/Lab1")
@@ -183,73 +184,12 @@ grid.arrange(plot.box(table,"class","y","Clases","Votos si","Votos si demócrata
              plot.box(table,"class","nv","Clases","No vota","Votos si demócratas vs republicanos"),
              ncol = 3)
 
-################################## REGRESIÓN LOGÍSTICA #################################
-
 #Se indica como factor la clase que incluye las opciones "democrat" y "republican
 table$class <- as.factor(table$class)
 
-binary = table[table$class == "democrat" | significative.table$class == "republican", ]
-binary$class_ = as.integer(table$class) - 2
-  
 
-rlog <- glm(class ~ y + n, table, family="binary")
-summary(rlog)
-coefficients(rlog)
-idx <- sample(1:400, 260, replace=TRUE)
-df.test <- binary[idx,]
-df.test$prob <- predict(rlog, df.test, type="response")
-head(df.test[, c("y","n","prob","class")])
 
-y_pred_num <- ifelse(df.test$prob<0.5,"democrat","republican")
-y_pred <- factor(y_pred_num)
-y_act <- df.test
-mean(y_pred == y_act$class)
 
-################## Regresión logística con datos significativos ################
-
-significative.democrat <- democrat[,c("classname","adoptionofthebudgetresolution",
-                                      "physicianfeefreeze","elsalvadoraid",
-                                      "antisatellitetestban","aidtonicaraguancontras",
-                                      "mxmissile","educationspending",
-                                      "superfundrighttosue")]
-
-significative.republican <- republican[,c("classname","adoptionofthebudgetresolution",
-                                      "physicianfeefreeze","elsalvadoraid",
-                                      "antisatellitetestban","aidtonicaraguancontras",
-                                      "mxmissile","educationspending",
-                                      "superfundrighttosue")]
-
-names <- c('y','n','?')
-significative.democrat.contingency <- as.data.frame(sapply(names, function(x) rowSums(significative.democrat[,2:8]==x)))
-colnames(significative.democrat.contingency) <- names
-class<-rep("democrat",267)
-significative.democrat.contingency$class<-class
-
-significative.republican.contingency <- as.data.frame(sapply(names, function(x) rowSums(republican[,2:8]==x)))
-colnames(significative.republican.contingency) <- names
-class<-rep("republican",167)
-significative.republican.contingency$class<-class
-
-significative.table <-rbind(significative.democrat.contingency,significative.republican.contingency)
-colnames(table)<- c('y','n','nv','class')
-
-#Se indica como factor la clase que incluye las opciones "democrat" y "republican
-significative.table$class <- as.factor(table$class)
-binary = significative.table[significative.table$class == "democrat" | significative.table$class == "republican", ]
-binary$class_ = as.integer(significative.table$class) - 2
-
-rlog <- glm(class ~ y + n, significative.table, family="binary")
-summary(rlog)
-coefficients(rlog)
-idx <- sample(1:400, 260, replace=TRUE)
-df.test <- binary[idx,]
-df.test$prob <- predict(rlog, df.test, type="response")
-head(df.test[, c("y","n","prob","class")])
-
-y_pred_num <- ifelse(df.test$prob<0.5,"democrat","republican")
-y_pred <- factor(y_pred_num)
-y_act <- df.test
-mean(y_pred == y_act$class)
 
 ############################t-test###################################################
 plot.hist2(democrat.contingency[,1],"Histograma demócratas votos si","Votos si","steelblue2")
@@ -264,3 +204,63 @@ t.test(x = democrat.contingency[,2], y = republican.contingency[,2], alternative
 #Correlación con los tipos de relaciones, de esta forma es posible saber si votar por 
 #una categoría implica votar por la otra
 cor(final)
+
+
+################################## REGRESIÓN LOGÍSTICA #################################
+
+
+data[,2:17] <- data.frame(lapply(data[,2:17], as.character), stringsAsFactors=FALSE)
+data[data=="y"] <- "1"
+data[data=="n"] <- "2"
+data[data=="?"] <- "0"
+data[,2:17] <- data.frame(lapply(data[,2:17], as.numeric))
+
+
+# Se genera el modelo de regresión logística con el factor de 2 niveles
+# classname respecto a todas las votaciones realizadas, para saber si una
+# persona puede ser clasificada como demócrata o republicano según
+# como vota en las distintas instancias
+rlog <- glm(classname ~ ., data, family="binomial")
+summary(rlog)
+# Al hacer la función summary(), se obtienen 5 votaciones que son 
+# las más significativas:
+#                        - adoption of the budget resolution
+#                        - physician free freeze
+#                        - immigration
+#                        - synfuels corporation cutback
+#                        - education spending
+# las cuales serán usadas para hacer la regresión, ya que las demás
+# al ser menos significantes, solo le aportan complejidad al modelo
+
+#Se filtra el dataset por las votaciones más significativas
+significative.data <- data[,c("classname","adoptionofthebudgetresolution", "physicianfeefreeze",
+                              "immigration", "synfuelscorporationcutback",
+                              "educationspending")]
+
+rlog <- glm(classname ~ ., significative.data, family="binomial")
+
+summary(rlog)
+coefficients(rlog)
+
+prediction <- predict(rlog, significative.data, type = "response")
+classes.pred <- rep("republican", length(prediction))
+classes.pred[prediction < 0.5] <- "democrat"
+classes.pred <- factor(classes.pred, levels = c("republican", "democrat"))
+confusion.matrix <- confusionMatrix(
+  data = classes.pred,
+  reference = data[["classname"]],
+  positive = "republican"
+)
+
+
+library(pROC)
+
+m1.roc1 <- roc(data[["classname"]], prediction)
+# En porciento
+m1.roc2 <- roc(data[["classname"]], prediction, percent = TRUE)
+# Suavisado
+m1.roc3 <- roc(data[["classname"]], prediction, percent = TRUE,
+               smooth = TRUE)
+ggroc(m1.roc1)
+ggroc(m1.roc2)
+plot(m1.roc3)
