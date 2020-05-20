@@ -106,8 +106,8 @@ plot.box<-function(
 url = "http://archive.ics.uci.edu/ml/machine-learning-databases/voting-records/house-votes-84.data"
 data <- read.csv(url, header = TRUE, sep = ",",quote = "\"",fill=T)
 colnames(data) <- c("classname", "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
-democrat<-filter(data, data$classname == "democrat")
-republican<-filter(data, data$classname == "republican")
+democrat<-dplyr::filter(data, data$classname == "democrat")
+republican<-dplyr::filter(data, data$classname == "republican")
 data1<-data.filter(data,c("NV","n","y"))
 data2 <- data.filter(democrat,c("DemocratNV","DemocratN","DemocratY"))
 data3 <- data.filter(republican,c("RepublicanNV","RepublicanN","RepublicanY"))
