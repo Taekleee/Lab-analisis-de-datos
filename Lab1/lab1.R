@@ -204,7 +204,8 @@ t.test(x = democrat.contingency[,2], y = republican.contingency[,2], alternative
 #Correlación con los tipos de relaciones, de esta forma es posible saber si votar por 
 #una categoría implica votar por la otra
 cor(final)
-
+dem.cor<-cor(d.range)
+rep.cor<-cor(r.range)
 
 ################################## REGRESIÓN LOGÍSTICA #################################
 
