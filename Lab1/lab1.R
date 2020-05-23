@@ -266,3 +266,6 @@ m1.roc3 <- roc(data[["classname"]], prediction, percent = TRUE,
 ggroc(m1.roc1)
 ggroc(m1.roc2)
 plot(m1.roc3)
+plot.roc(m1.roc1,legacy.axes = TRUE, print.thres = "best", print.auc = TRUE,
+         auc.polygon = FALSE, max.auc.polygon = FALSE, auc.polygon.col = "gainsboro",
+         col = 2, grid = TRUE)
