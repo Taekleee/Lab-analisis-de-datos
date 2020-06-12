@@ -3,7 +3,9 @@ library(purrr)
 library(factoextra)
 library(plyr)
 library(tclust)
-
+library(gridExtra)
+library(grid)
+library(ggpubr)
 
 url = "http://archive.ics.uci.edu/ml/machine-learning-databases/voting-records/house-votes-84.data"
 data <- read.csv(url, header = TRUE, sep = ",",quote = "\"",fill=T)
@@ -19,12 +21,27 @@ data[data=="?"] <- "0"
 data[,2:17] <- data.frame(lapply(data[,2:17], as.numeric))
 #data <- scale(data[,2:17])
 data <- data[,2:17]
+
+
+############################### K-MEANS con todos los datos ####################################
+
 #Se calcula la distancia euclideana, la matriz de similitud y se aplica k-means
+
+optimal.plot <- fviz_nbclust(data, kmeans, method = "silhouette")
+
 distance <- get_dist(data, method = "euclidean")
 fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"),show_labels=TRUE)
-k2 <- kmeans(data, centers = 3, nstart = 25)
+k2 <- kmeans(data, centers = 2, nstart = 25)
 k2.plot <- fviz_cluster(k2, data = data)
-print(k2.plot)
+
+k3 <- kmeans(data, centers = 3, nstart = 25)
+k3.plot <- fviz_cluster(k3, data = data)
+
+k4 <- kmeans(data, centers = 4, nstart = 25)
+k4.plot <- fviz_cluster(k4, data = data)
+
+
+ggarrange(k2.plot,k3.plot,k4.plot,optimal.plot)
 
 ######################## Cluster con datos significativos en reg.log ###########################
 
@@ -34,17 +51,19 @@ reglog <- data[,c("adoptionofthebudgetresolution", "physicianfeefreeze",
                               "educationspending")]
 
 distance <- get_dist(reglog, method = "euclidean")
-distance <- mahalanobis(reglog, center = FALSE, cov = (var(reglog)) )
 
 fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"),show_labels=TRUE)
 
 #Kmeans clustering con 2 y 3 nodos
+optimalLog.plot <- fviz_nbclust(reglog, kmeans, method = "silhouette")
 k2 <- kmeans(reglog, centers = 2, nstart = 25)
 k2.plot <- fviz_cluster(k2, data = reglog)
-print(k2.plot)
 k3 <- kmeans(reglog, centers = 3, nstart = 25)
 k3.plot <- fviz_cluster(k3, data = reglog)
-print(k3.plot)
+k8 <- kmeans(reglog, centers = 8, nstart = 25)
+k8.plot <- fviz_cluster(k8, data = reglog)
+
+ggarrange(optimalLog.plot, k2.plot, k3.plot, k8.plot)
 
 #pam clustering con 2 y 3 nodos
 pam_clusters2 <- pam(x = reglog, k = 2, metric = "manhattan")
@@ -60,7 +79,7 @@ pamk3.plot <- fviz_cluster(object = pam_clusters3, data = reglog, ellipse.type =
   theme_bw() +
   labs(title = "Resultados clustering PAM") +
   theme(legend.position = "none")
-
+ggarrange(pamk2.plot,pamk3.plot)
 
 #################################################################################################
 
