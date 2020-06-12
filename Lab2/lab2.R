@@ -26,6 +26,44 @@ k2 <- kmeans(data, centers = 3, nstart = 25)
 k2.plot <- fviz_cluster(k2, data = data)
 print(k2.plot)
 
+######################## Cluster con datos significativos en reg.log ###########################
+
+#Se seleccionan las columnas más significativas para el análisis de la regresión logística
+reglog <- data[,c("adoptionofthebudgetresolution", "physicianfeefreeze",
+                              "immigration", "synfuelscorporationcutback",
+                              "educationspending")]
+
+distance <- get_dist(reglog, method = "euclidean")
+distance <- mahalanobis(reglog, center = FALSE, cov = (var(reglog)) )
+
+fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"),show_labels=TRUE)
+
+#Kmeans clustering con 2 y 3 nodos
+k2 <- kmeans(reglog, centers = 2, nstart = 25)
+k2.plot <- fviz_cluster(k2, data = reglog)
+print(k2.plot)
+k3 <- kmeans(reglog, centers = 3, nstart = 25)
+k3.plot <- fviz_cluster(k3, data = reglog)
+print(k3.plot)
+
+#pam clustering con 2 y 3 nodos
+pam_clusters2 <- pam(x = reglog, k = 2, metric = "manhattan")
+pam_clusters3 <- pam(x = reglog, k = 3, metric = "manhattan")
+pamk2.plot <- fviz_cluster(object = pam_clusters2, data = reglog, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+
+pamk3.plot <- fviz_cluster(object = pam_clusters3, data = reglog, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+
+
+#################################################################################################
+
 #hclust y agnes se ocupan para la agrupación jerárquica
 #agnes también retorna el coeficiente de aglomeración (ac), el cual indica la cantidad de estructura
 #de agrupamiento encontrada (si es más cercano a 1 es más fuerte).
