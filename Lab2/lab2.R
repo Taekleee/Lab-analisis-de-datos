@@ -108,7 +108,13 @@ cantidad<-table(data$cluster)
 #Medoids se ve menos afectado por el ruido o outliers que k-means
 
 
-pam_clusters <- pam(x = data, k = 2, metric = "manhattan")
+pam_clusters <- pam(x = data, k = 2, metric = "euclidean")
+fviz_cluster(object = pam_clusters, data = data, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+pam_clusters <- pam(x = data, k = 3, metric = "euclidean")
 fviz_cluster(object = pam_clusters, data = data, ellipse.type = "t",
              repel = TRUE) +
   theme_bw() +
@@ -119,19 +125,49 @@ fviz_cluster(object = pam_clusters, data = data, ellipse.type = "t",
 
 centers <- k2$centers[k2$cluster, ]
 distances <- sqrt(rowSums((data - centers)^2))
-outliers <- order(distances, decreasing=T)[1:15]
+outliers <- order(distances, decreasing=T)[1:10]
+outliers2 <- order(distances, decreasing=T)[1:70]
+
 print("Votaciones de los outliers:")
 print(data[outliers,])
+print(data[outliers2,])
 
 new.data<-data[outliers*-1,]
-pam_clusters <- pam(x = new.data, k = 3, metric = "manhattan")
-fviz_cluster(object = pam_clusters, data = data, ellipse.type = "t",
+new.data2<-data[outliers2*-1,]
+############################################## 2 ###################################################
+pam_clusters <- pam(x = new.data, k = 2, metric = "euclidean")
+fviz_cluster(object = pam_clusters, data = new.data, ellipse.type = "t",
              repel = TRUE) +
   theme_bw() +
   labs(title = "Resultados clustering PAM") +
   theme(legend.position = "none")
-distance <- get_dist(new.data, method = "euclidean")
-fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"),show_labels=TRUE)
-k2 <- kmeans(new.data, centers = 3, nstart = 25)
-k2.plot <- fviz_cluster(k2, data = new.data)
-print(k2.plot)
+
+pam_clusters2 <- pam(x = new.data2, k = 2, metric = "euclidean")
+fviz_cluster(object = pam_clusters2, data = new.data2, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+
+
+############################################## 2 ###################################################
+
+
+############################################## 3 ###################################################
+
+pam_clusters <- pam(x = new.data, k = 3, metric = "euclidean")
+fviz_cluster(object = pam_clusters, data = new.data, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+
+
+pam_clusters2 <- pam(x = new.data2, k = 3, metric = "euclidean")
+fviz_cluster(object = pam_clusters2, data = new.data2, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM") +
+  theme(legend.position = "none")
+fviz_nbclust(new.data2,pam, method = "silhouette")
+############################################## 3 ###################################################
