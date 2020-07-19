@@ -65,7 +65,7 @@ create_transaction<-function(
 }
 
 #Transacciones: cada fila contiene una fila, en donde se indica los votos emitidos por cada político
-
+new_data2 <- create_transaction("y")
 transacciones <- as(new_data2, Class = "transactions")
 number_transactions <- size(transacciones)
 #Frecuencia de las transacciones (cantidad de elementos presentes en cada una de ellas)
