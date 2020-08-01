@@ -95,8 +95,9 @@ outliers2 <- order(distances, decreasing=T)[1:50]
 outliers3 <- order(distances, decreasing=T)[1:100]
 
 print("Votaciones de los outliers:")
-print(data[outliers1,])
-print(data[outliers2,])
+print(outliers1)
+print(outliers2)
+print(outliers3)
 
 new.data1<-data[outliers1*-1,]
 new.data2<-data[outliers2*-1,]
