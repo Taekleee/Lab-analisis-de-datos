@@ -40,6 +40,9 @@ k3.plot <- fviz_cluster(k3, data = data)
 
 k4 <- kmeans(data, centers = 4, nstart = 25)
 k4.plot <- fviz_cluster(k4, data = data)
+k2$centers
+k3$centers
+k4$centers
 
 
 ggarrange(k2.plot,k3.plot,k4.plot)
@@ -65,6 +68,10 @@ k3.plot <- fviz_cluster(k3, data = reglog)
 k8 <- kmeans(reglog, centers = 8, nstart = 25)
 k8.plot <- fviz_cluster(k8, data = reglog)
 
+k2$centers
+k3$centers
+k8$centers
+
 ggarrange(k2.plot, k3.plot, k8.plot)
 
 
@@ -88,6 +95,7 @@ cantidad<-table(data$cluster)
 
 
 #############################Outliers###############################
+k2 <- kmeans(data, centers = 2, nstart = 25)
 centers <- k2$centers[k2$cluster, ]
 distances <- sqrt(rowSums((data - centers)^2))
 outliers1 <- order(distances, decreasing=T)[1:10]
@@ -121,6 +129,14 @@ k6 <- kmeans(new.data2, centers = 3, nstart = 25)
 k6.plot <- fviz_cluster(k6, data = new.data2)
 k8 <- kmeans(new.data3, centers = 3, nstart = 25)
 k8.plot <- fviz_cluster(k8, data = new.data3)
+
+k3$centers
+k4$centers
+k7$centers
+k5$centers
+k6$centers
+k8$centers
+
 
 ggarrange(k3.plot, k4.plot, k7.plot, k5.plot,k6.plot,k8.plot)
 
