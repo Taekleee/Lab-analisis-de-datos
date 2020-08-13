@@ -2,97 +2,57 @@ library(arules)
 library(dplyr)
 library(magrittr)
 library(tidyverse)
-#Filter puede ser "y", "n" o "?"
-create_transaction<-function(
-  filter
-){
-  url = "http://archive.ics.uci.edu/ml/machine-learning-databases/voting-records/house-votes-84.data"
-  data <- (read.csv(url, header = TRUE, sep = ",",quote = "\"",fill=T))
-  colnames(data) <- c("classname", "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
-  data[,2:17] <- data.frame(lapply(data[,2:17], as.character), stringsAsFactors=FALSE)
-  if(filter == "y"){
-    data[data=="y"] <- "1"
-    data[data=="n"] <- "0"
-    data[data=="?"] <- "0"  
-  }
-  else if(filter == "n"){
-    data[data=="y"] <- "0"
-    data[data=="n"] <- "1"
-    data[data=="?"] <- "0"
-  }
-  else{
-    data[data=="y"] <- "0"
-    data[data=="n"] <- "0"
-    data[data=="?"] <- "1"
-  }
-  
-  data[,2:17] <- data.frame(lapply(data[,2:17], as.numeric))
-  data$handicappedinfants[data$handicappedinfants == 1] = "handicappedinfants"
-  data$waterprojectcostsharing[data$waterprojectcostsharing == 1] = "waterprojectcostsharing"
-  data$adoptionofthebudgetresolution[data$adoptionofthebudgetresolution == 1] = "adoptionofthebudgetresolution"
-  data$physicianfeefreeze[data$physicianfeefreeze == 1] = "physicianfeefreeze"
-  data$elsalvadoraid[data$elsalvadoraid == 1] = "elsalvadoraid"
-  data$religiousgroupsinschools[data$religiousgroupsinschools == 1] = "religiousgroupsinschools"
-  data$antisatellitetestban[data$antisatellitetestban == 1] = "antisatellitetestban"
-  data$aidtonicaraguancontras[data$aidtonicaraguancontras == 1] = "aidtonicaraguancontras"
-  data$mxmissile[data$mxmissile == 1] = "mxmissile"
-  data$immigration[data$immigration == 1] = "immigration"
-  data$synfuelscorporationcutback[data$synfuelscorporationcutback == 1] = "synfuelscorporationcutback"
-  data$educationspending[data$educationspending == 1] = "educationspending"
-  data$superfundrighttosue[data$superfundrighttosue == 1] = "superfundrighttosue"
-  data$crime[data$crime == 1] = "crime"
-  data$dutyfreeexports[data$dutyfreeexports == 1] = "dutyfreeexports"
-  data$exportadministrationactsouthafrica[data$exportadministrationactsouthafrica == 1] = "exportadministrationactsouthafrica"
-  
-  data <- data[,2:17] 
-  new_data = NULL
-  new_data2 = NULL
-  l = 1
-  for(i in 1:nrow(data)){
-    k = 1
-    for(j in 1:ncol(data)){
-      if(data[i,j]!= 0){
-        new_data[k] = data[i,j]
-        k = k + 1
-      }
-      
-    }
-    new_data2[l] = list(new_data)
-    l = l + 1
- 
-  }  
-  new_data2
-}
+library(arulesViz)
 
-#Transacciones: cada fila contiene una fila, en donde se indica los votos emitidos por cada político
-new_data2 <- create_transaction("y")
-transacciones <- as(new_data2, Class = "transactions")
-number_transactions <- size(transacciones)
-#Frecuencia de las transacciones (cantidad de elementos presentes en cada una de ellas)
-data.frame(number_transactions) %>%
-  ggplot(aes(x = number_transactions)) +
-  geom_histogram() +
-  labs(title = "Distribución del tamaño de las transacciones",
-       x = "Tamaño") +
+#######################################################################################################################
+#####################################Obtención de datos###############################################################
+#######################################################################################################################
+url = "http://archive.ics.uci.edu/ml/machine-learning-databases/voting-records/house-votes-84.data"
+data <- (read.csv(url, header = TRUE, sep = ",",quote = "\"",fill=T))
+colnames(data) <- c("classname", "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
+votes<-as.tibble(data)
+
+
+
+
+#######################################################################################################################
+############################################Algoritmo Apriori##########################################################
+#######################################################################################################################
+
+
+#La regla se fuerza a un clasificador, debido a que el consecuente es la clase
+rules <- apriori(votes,
+                 parameter=list(support = 0.2, minlen = 2, maxlen = 14, target="rules"),
+                 appearance=list(rhs = c("classname=democrat", "classname=republican")))
+all_rules<- sort(x = rules, decreasing = TRUE, by = "confidence")
+#Mejores 10 reglas según el lift
+result<-inspect(head(all_rules, n= 10, by = "lift"))
+
+#Item sets más frecuentes dentro de las reglas según soporte
+itemsets <- apriori(votes,
+                    parameter=list(support = 0.2, minlen = 2, maxlen = 14,target = "frequent itemset"),
+                    appearance=list(rhs = c("classname=democrat", "classname=republican")))
+summary(itemsets)
+top_itemsets <- sort(itemsets, by = "support", decreasing = TRUE)[1:20]
+
+
+
+#######################################################################################################################
+#####################################Gráficos#########################################################################
+#######################################################################################################################
+
+
+#Gráfico del soporte vs confianza de las reglas
+plot(rules, measure = c("support", "confidence"), shading = "lift", jitter = 0)
+
+#Gráfico reglas vs posición
+plot(rules, method = "paracoord")
+
+#Gráfico de los 20 sets de items más frecuentes según el soporte
+as(top_itemsets, Class = "data.frame") %>%
+  ggplot(aes(x = reorder(items, support), y = support)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Itemsets más frecuentes", x = "itemsets") +
   theme_bw()
 
-#Soporte de cada item, es decir, la cantidad de veces que aparece cada item en las transacciones respecto
-#al total 
-#type <- relative = soporte
-#     <- absolute = frecuencia con la que aparecen los items en las transacciones
-
-soporte <- itemFrequency(x = transacciones, type = "relative")
-soporte %>% sort(decreasing = TRUE) %>% head(16)
-
-
-
-
-#Algoritmo apriori
-rules <- apriori(data = transacciones, parameter = list(support = 0.3, minlen = 2,maxlen = 16,target = "rules",confidence = 0.8))
-summary(rules)
-top_20_itemsets <- sort(rules, by = "support", decreasing = TRUE)[1:20]
-inspect(top_20_itemsets)
-
-#Se pueden variar las métricas 
-metricas <- interestMeasure(rules, measure = c("coverage", "fishersExactTest"),
-                            transactions = transacciones)
