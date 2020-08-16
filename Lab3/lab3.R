@@ -18,11 +18,13 @@ votes<-as.tibble(data)
 #######################################################################################################################
 ############################################Algoritmo Apriori##########################################################
 #######################################################################################################################
+support <- 0.2
+confidence <- 0.5
 
 
 #La regla se fuerza a un clasificador, debido a que el consecuente es la clase
 rules <- apriori(votes,
-                 parameter=list(support = 0.2, minlen = 2, maxlen = 14, target="rules"),
+                 parameter=list(support = support, confidence = confidence,  minlen = 3, maxlen = 17, target="rules"),
                  appearance=list(rhs = c("classname=democrat", "classname=republican")))
 all_rules<- sort(x = rules, decreasing = TRUE, by = "confidence")
 #Mejores 10 reglas según el lift
@@ -30,7 +32,7 @@ result<-inspect(head(all_rules, n= 10, by = "lift"))
 
 #Item sets más frecuentes dentro de las reglas según soporte
 itemsets <- apriori(votes,
-                    parameter=list(support = 0.2, minlen = 2, maxlen = 14,target = "frequent itemset"),
+                    parameter=list(support = support,  confidence = confidence,minlen = 3, maxlen = 17,target = "frequent itemset"),
                     appearance=list(rhs = c("classname=democrat", "classname=republican")))
 summary(itemsets)
 top_itemsets <- sort(itemsets, by = "support", decreasing = TRUE)[1:20]
