@@ -1,6 +1,7 @@
 library(e1071) 
 library(caret)
 library(pROC)
+library(ROCR)
 #######################################################################################################################
 #####################################Obtención de datos###############################################################
 #######################################################################################################################
@@ -22,7 +23,4 @@ bayesiano <- naiveBayes(classname ~ ., data = training.set)
 pred <- predict(bayesiano, test.set)
 tabla <- table(test.set$classname, pred, dnn = c("Actual", "Predicha"))
 confusionMatrix(tabla)
-
-
-
-
+m1.roc1 <- roc(test.set$classname, as.numeric(pred))
