@@ -24,3 +24,7 @@ pred <- predict(bayesiano, test.set)
 tabla <- table(test.set$classname, pred, dnn = c("Actual", "Predicha"))
 confusionMatrix(tabla)
 m1.roc1 <- roc(test.set$classname, as.numeric(pred))
+
+plot.roc(m1.roc1,legacy.axes = TRUE, print.thres = "best", print.auc = TRUE,
+         auc.polygon = FALSE, max.auc.polygon = FALSE, auc.polygon.col = "gainsboro",
+         col = 2, grid = TRUE)
