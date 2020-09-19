@@ -1,15 +1,12 @@
 library("C50")
 library("caret")
-
+library("pROC")
 url = "http://archive.ics.uci.edu/ml/machine-learning-databases/voting-records/house-votes-84.data"
 data <- (read.csv(url, header = TRUE, sep = ",",quote = "\"",fill=T))
 colnames(data) <- c("classname", "handicappedinfants","waterprojectcostsharing","adoptionofthebudgetresolution","physicianfeefreeze","elsalvadoraid","religiousgroupsinschools","antisatellitetestban","aidtonicaraguancontras","mxmissile","immigration","synfuelscorporationcutback","educationspending","superfundrighttosue","crime","dutyfreeexports","exportadministrationactsouthafrica")
 
 
 data[,2:17] <- data.frame(lapply(data[,2:17], as.character), stringsAsFactors=FALSE)
-#data[data=="y"] <- "1"
-#data[data=="n"] <- "2"
-#data[data=="?"] <- "0"
 data[,2:17] <- data.frame(lapply(data[,2:17], as.character))
 
 training.index = createDataPartition(data$classname, p=0.7)$Resample1
@@ -43,15 +40,14 @@ test.set$classname <- as.factor(test.set$classname)
 # se encuentra en la columna 1, se realiza training.set[, -1]
 # indicando que la columna 1 se omite.
 
-tree = C5.0(classname ~ ., training.set)
+tree = C5.0(classname ~ ., training.set, trials = 1)
 tree.rules = C5.0(x = training.set[, -1], y = training.set$classname, rules = T)
 tree.pred.class = predict(tree, test.set[,-1], type = "class")
 tree.pred.prob = predict(tree, test.set[,-1], type = "prob")
 
-
-
+rocCurve <- roc(as.numeric(test.set$classname), as.numeric(tree.pred.class))
+plot(rocCurve)
 plot(tree)
-
 summary(tree.rules)
 
 conf.matrix.tree = confusionMatrix(table(test.set$classname, tree.pred.class))
@@ -63,7 +59,7 @@ conf.matrix.tree
 # columna con el número 5.
 #
 
-tree = C5.0(classname ~ ., training.set[, -5])
+tree = C5.0(classname ~ ., training.set[, -5], trials = 20)
 tree.rules = C5.0(x = training.set[, c(-1, -5)], y = training.set$classname, rules = T)
 tree.pred.class = predict(tree, test.set[,c(-1, -5)], type = "class")
 tree.pred.prob = predict(tree, test.set[,c(-1, -5)], type = "prob")
@@ -74,7 +70,7 @@ plot(tree)
 
 summary(tree.rules)
 
-conf.matrix.tree = confusionMatrix(table(test.set$classname, tree.pred.class))
+conf.matrix.tree = confusionMatrix(table(test.set$classname, tree.pred.class), mode = "everything")
 conf.matrix.tree
 
 # Ahora se realiza el mismo procedimiento anterior para generar un 
@@ -83,7 +79,7 @@ conf.matrix.tree
 # columna con el número 3.
 #
 
-tree = C5.0(classname ~ ., training.set[, c(-5,-4)])
+tree = C5.0(classname ~ ., training.set[, c(-5,-4)], trials = 20)
 tree.rules = C5.0(x = training.set[, c(-1, -5, -4)], y = training.set$classname, rules = T)
 tree.pred.class = predict(tree, test.set[,c(-1, -5, -4)], type = "class")
 tree.pred.prob = predict(tree, test.set[,c(-1, -5, -4)], type = "prob")
@@ -116,6 +112,7 @@ summary(tree.rules)
 
 conf.matrix.tree = confusionMatrix(table(test.set$classname, tree.pred.class))
 conf.matrix.tree
+
 
 # Ahora se realiza el mismo procedimiento anterior para generar un 
 # árbol de decisión, utilizando solo aquellas votaciones
